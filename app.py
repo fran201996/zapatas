@@ -229,7 +229,7 @@ with tab3:
         pdf.cell(0, 6, f"- Cortante Punzonamiento (Vu): {Vu_punz:.2f} tn / Capacidad (Phi_Vc): {Vc_punz:.2f} tn", ln=True)
         pdf.cell(0, 6, f"- Acero Requerido (Dir X): {As_dis_x:.2f} cm2", ln=True)
 
-        return pdf.output(dest='S').encode('latin-1')
+        return bytes(pdf.output())
 
     pdf_bytes = crear_pdf()
     st.download_button(
