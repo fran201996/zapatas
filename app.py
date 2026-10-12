@@ -304,7 +304,7 @@ with tab3:
             pdf.multi_cell(0, 5, limpiar(b.replace('\n', ' ')))
             pdf.ln(3)
 
-        return pdf.output(dest='S').encode('latin-1')
+        return pdf.output()
 
     # Botón para descargar el PDF en Streamlit
     pdf_bytes = generar_pdf()
