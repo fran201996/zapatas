@@ -239,18 +239,16 @@ with tab3:
             return str(texto).replace('ϕ', 'φ')
 
         pdf = FPDF()
-        pdf.add_font('ArialU', '', r'C:\Windows\Fonts\arial.ttf')
-        pdf.add_font('ArialU', 'B', r'C:\Windows\Fonts\arialbd.ttf')
         pdf.add_page()
         pdf.set_auto_page_break(auto=True, margin=15)
 
-        pdf.set_font('ArialU', 'B', 16)
+        pdf.set_font('Helvetica', 'B', 16)
         pdf.cell(0, 10, 'MEMORIA DE DISEÑO DE ZAPATA AISLADA', align='C', new_x='LMARGIN', new_y='NEXT')
-        pdf.set_font('ArialU', '', 10)
+        pdf.set_font('Helvetica', '', 10)
         pdf.cell(0, 6, u(f'Proyecto: {nombre_proyecto} | Elemento: {nombre_zapata}'), align='C', new_x='LMARGIN', new_y='NEXT')
         pdf.ln(5)
 
-        pdf.set_font('ArialU', 'B', 12)
+        pdf.set_font('Helvetica', 'B', 12)
         pdf.cell(0, 8, 'CUADRO RESUMEN - DATOS DE DISEÑO Y RESULTADOS', new_x='LMARGIN', new_y='NEXT')
 
         datos_tabla = [
