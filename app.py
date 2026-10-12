@@ -266,12 +266,12 @@ with tab3:
 
         pdf.set_fill_color(23, 105, 170)
         pdf.set_text_color(255, 255, 255)
-        pdf.set_font('ArialU', 'B', 10)
+        pdf.set_font('Helvetica', 'B', 10)
         pdf.cell(110, 7, ' Parámetro / Dato', border=1, align='L', fill=True, new_x='RIGHT', new_y='TOP')
         pdf.cell(80, 7, ' Valor Adoptado', border=1, align='L', fill=True, new_x='LMARGIN', new_y='NEXT')
 
         pdf.set_text_color(0, 0, 0)
-        pdf.set_font('ArialU', '', 10)
+        pdf.set_font('Helvetica', '', 10)
         fill = False
         for k, v in datos_tabla:
             if fill:
@@ -283,14 +283,14 @@ with tab3:
             fill = not fill
 
         pdf.ln(8)
-        pdf.set_font('ArialU', 'B', 12)
+        pdf.set_font('Helvetica', 'B', 12)
         pdf.cell(0, 8, 'DESARROLLO DE PASOS DE CÁLCULO', new_x='LMARGIN', new_y='NEXT')
 
         for t, b in pasos:
-            pdf.set_font('ArialU', 'B', 10)
+            pdf.set_font('Helvetica', 'B', 10)
             pdf.set_text_color(23, 105, 170)
             pdf.cell(0, 6, u(t), new_x='LMARGIN', new_y='NEXT')
-            pdf.set_font('ArialU', '', 9)
+            pdf.set_font('Helvetica', '', 9)
             pdf.set_text_color(0, 0, 0)
             pdf.multi_cell(0, 5, u(b.replace('\n', ' ')), new_x='LMARGIN', new_y='NEXT')
             pdf.ln(3)
