@@ -5,6 +5,11 @@ from matplotlib.patches import Rectangle
 import pandas as pd
 import plotly.graph_objects as go
 from fpdf import FPDF
+from fractions import Fraction
+
+def fr(d):
+    f = Fraction(d).limit_denominator(8)
+    return f"{f.numerator}/{f.denominator}" if f.denominator > 1 else f"{f.numerator}"
 
 st.set_page_config(page_title='Diseño de zapata aislada', layout='wide')
 
@@ -48,7 +53,7 @@ qadm=st.sidebar.number_input('qs=qadm [kgf/cm²]', value=2.50)
 hpiso=st.sidebar.number_input('hpiso [cm]', value=10.0)
 gammac=st.sidebar.number_input('γc [kgf/m³]', value=2400.0)
 rec=st.sidebar.number_input('Recubrimiento [cm]', value=10.0)
-db=st.sidebar.selectbox('Barra de flexión [pulg]', [0.5,0.625,0.75,0.875,1.0], index=2)
+db=st.sidebar.selectbox('Barra de flexión [pulg]', [0.5,0.625,0.75,0.875,1.0], index=2, format_func=lambda x: f'{fr(x)}"')
 
 def ab(d):
     return math.pi*(d*2.54)**2/4
@@ -111,7 +116,7 @@ with tab1:
     ('5. Corte por flexión',f"x = L/2 − Lcx/2 − d = {r['xcorte']:.2f} cm.\nVu = {r['Vu']:,.2f} kgf.\nϕVc = {r['phiVc']:,.2f} kgf.\nResultado: {'CUMPLE' if r['phiVc']>=r['Vu'] else 'NO CUMPLE'}."),
     ('6. Punzonamiento',f"A₀ = {r['A0']:,.2f} cm²; b₀ = {r['b0']:.2f} cm.\nVup = {r['Vup']:,.2f} kgf.\nϕVcp₁ = {r['Vcp1']:,.2f} kgf; ϕVcp₂ = {r['Vcp2']:,.2f} kgf.\nSe adopta el menor: ϕVcp = {r['Vcp']:,.2f} kgf.\nResultado: {'CUMPLE' if r['Vcp']>=r['Vup'] else 'NO CUMPLE'}."),
     ('7–11. Revisión final',f"Como hz=70 cm {'no cumple punzonamiento' if r70['Vcp']<r70['Vup'] else 'cumple punzonamiento'}. Se adopta hz = {hz:.0f} cm y se recalculan qsn, dimensiones, corte y punzonamiento.\n\nResultado final de corte: {'CUMPLE' if r['phiVc']>=r['Vu'] else 'NO CUMPLE'}. Punzonamiento: {'CUMPLE' if r['Vcp']>=r['Vup'] else 'NO CUMPLE'}."),
-    ('12. Diseño por flexión',f"x = {r['xflex']:.2f} cm; Mu = {r['Mu']:,.2f} kgf·cm.\nAs requerido = {r['Asreq']:.2f} cm²; As mínimo = {r['Asmin']:.2f} cm².\nAs adoptado = {r['As']:.2f} cm².\n\nAcero: Ø{db:g}\" @ {r['separ_adopt']:.0f} cm en ambas direcciones."),
+    ('12. Diseño por flexión',f"x = {r['xflex']:.2f} cm; Mu = {r['Mu']:,.2f} kgf·cm.\nAs requerido = {r['Asreq']:.2f} cm²; As mínimo = {r['Asmin']:.2f} cm².\nAs adoptado = {r['As']:.2f} cm².\n\nAcero: Ø{fr(db)}\" @ {r['separ_adopt']:.0f} cm en ambas direcciones."),
     ]
     formulas = [
         [r"L_{db,1}=0.08d_b\frac{f_y}{\sqrt{f'_c}}", r"L_{db,2}=0.004d_bf_y", r"L_{db}=\max(L_{db,1},L_{db,2}),\qquad d=h_z-r"],
@@ -165,7 +170,7 @@ with tab1:
             st.markdown('**Fórmulas utilizadas:**')
             for formula in formulas[indice]:
                 st.latex(formula)
-    st.success(f"Zapata final: {r['lado']:.0f} × {r['lado']:.0f} cm; hz = {hz:.0f} cm; acero inferior Ø{db:g}\" @ {r['separ_adopt']:.0f} cm en ambas direcciones.")
+    st.success(f"Zapata final: {r['lado']:.0f} × {r['lado']:.0f} cm; hz = {hz:.0f} cm; acero inferior Ø{fr(db)}\" @ {r['separ_adopt']:.0f} cm en ambas direcciones.")
 
 with tab2:
     col_planta, col_3d = st.columns(2)
@@ -268,7 +273,7 @@ with tab3:
             ("Dimensiones finales de zapata (B × L)", f"{r['lado']:.0f} × {r['lado']:.0f} cm"),
             ("Peralte total (hz)", f"{hz:.0f} cm"),
             ("Peralte efectivo (d)", f"{r['d']:.2f} cm"),
-            ("Acero de refuerzo adoptado", f"Ø{db:g}\" @ {r['separ_adopt']:.0f} cm"),
+            ("Acero de refuerzo adoptado", f"Ø{fr(db)}\" @ {r['separ_adopt']:.0f} cm"),
         ]
 
         pdf.set_fill_color(23, 105, 170)
