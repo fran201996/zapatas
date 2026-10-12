@@ -236,7 +236,14 @@ with tab3:
     # --- FUNCIÓN PARA GENERAR EL PDF ---
     def generar_pdf():
         def u(texto):
-            return str(texto).replace('ϕ', 'φ')
+            tabla = str.maketrans({
+                '₀':'0','₁':'1','₂':'2','₃':'3','₄':'4','₅':'5','₆':'6','₇':'7','₈':'8','₉':'9',
+                '−':'-','–':'-','—':'-','·':'*','’':"'",'“':'"','”':'"',
+                'ϕ':'phi','φ':'phi','γ':'gamma','β':'beta','√':'raiz ','≥':'>=','≤':'<=','≠':'!=',
+            })
+            texto = str(texto).translate(tabla)
+            # Cualquier otro carácter raro se vuelve "?" en vez de romper el programa
+            return texto.encode('latin-1', 'replace').decode('latin-1')
 
         pdf = FPDF()
         pdf.add_page()
@@ -278,8 +285,8 @@ with tab3:
                 pdf.set_fill_color(240, 245, 250)
             else:
                 pdf.set_fill_color(255, 255, 255)
-            pdf.cell(110, 6, f' {k}', border=1, align='L', fill=True, new_x='RIGHT', new_y='TOP')
-            pdf.cell(80, 6, f' {v}', border=1, align='L', fill=True, new_x='LMARGIN', new_y='NEXT')
+            pdf.cell(110, 6, u(f' {k}'), border=1, align='L', fill=True, new_x='RIGHT', new_y='TOP')
+            pdf.cell(80, 6, u(f' {v}'), border=1, align='L', fill=True, new_x='LMARGIN', new_y='NEXT')
             fill = not fill
 
         pdf.ln(8)
