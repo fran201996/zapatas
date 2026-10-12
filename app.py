@@ -234,30 +234,24 @@ with tab3:
     st.markdown('<div style="background:#dcecff;border-left:6px solid #1769aa;padding:16px;border-radius:8px;margin-bottom:18px"><h3 style="margin:0;color:#174a7e">Memoria de cálculo de zapata aislada</h3><p style="margin:6px 0 0">Visualiza los pasos y descarga el reporte oficial en formato PDF con su cuadro resumen.</p></div>', unsafe_allow_html=True)
     
     # --- FUNCIÓN PARA GENERAR EL PDF ---
-    def limpiar(texto):
-        """Convierte símbolos no soportados por latin-1 a equivalentes simples para el PDF."""
-        tabla = str.maketrans({
-            '₀':'0','₁':'1','₂':'2','₃':'3','₄':'4','₅':'5','₆':'6','₇':'7','₈':'8','₉':'9',
-            '−':'-','–':'-','—':'-','·':'*','’':"'",'“':'"','”':'"',
-            'ϕ':'phi','φ':'phi','γ':'gamma','β':'beta','√':'raiz ','≥':'>=','≤':'<=','≠':'!=',
-        })
-        texto = str(texto).translate(tabla)
-        # Cualquier otro carácter raro se reemplaza por "?" en lugar de romper el programa
-        return texto.encode('latin-1', 'replace').decode('latin-1')
     def generar_pdf():
+        def u(texto):
+            return str(texto).replace('ϕ', 'φ')
+
         pdf = FPDF()
+        pdf.add_font('ArialU', '', r'C:\Windows\Fonts\arial.ttf')
+        pdf.add_font('ArialU', 'B', r'C:\Windows\Fonts\arialbd.ttf')
         pdf.add_page()
         pdf.set_auto_page_break(auto=True, margin=15)
 
-        pdf.set_font('Arial', 'B', 16)
-        pdf.cell(0, 10, limpiar('MEMORIA DE DISEÑO DE ZAPATA AISLADA'), 0, 1, 'C')
-        pdf.set_font('Arial', '', 10)
-        pdf.cell(0, 6, limpiar(f'Proyecto: {nombre_proyecto} | Elemento: {nombre_zapata}'), 0, 1, 'C')
+        pdf.set_font('ArialU', 'B', 16)
+        pdf.cell(0, 10, 'MEMORIA DE DISEÑO DE ZAPATA AISLADA', align='C', new_x='LMARGIN', new_y='NEXT')
+        pdf.set_font('ArialU', '', 10)
+        pdf.cell(0, 6, u(f'Proyecto: {nombre_proyecto} | Elemento: {nombre_zapata}'), align='C', new_x='LMARGIN', new_y='NEXT')
         pdf.ln(5)
 
-        pdf.set_font('Arial', 'B', 12)
-        pdf.cell(0, 8, limpiar('CUADRO RESUMEN - DATOS DE DISEÑO Y RESULTADOS'), 0, 1, 'L')
-        pdf.set_font('Arial', '', 10)
+        pdf.set_font('ArialU', 'B', 12)
+        pdf.cell(0, 8, 'CUADRO RESUMEN - DATOS DE DISEÑO Y RESULTADOS', new_x='LMARGIN', new_y='NEXT')
 
         datos_tabla = [
             ("Resistencia del concreto (f'c)", f"{fc:.0f} kgf/cm²"),
@@ -269,42 +263,41 @@ with tab3:
             ("Dimensiones finales de zapata (B × L)", f"{r['lado']:.0f} × {r['lado']:.0f} cm"),
             ("Peralte total (hz)", f"{hz:.0f} cm"),
             ("Peralte efectivo (d)", f"{r['d']:.2f} cm"),
-            ("Acero de refuerzo adoptado", f"Ø{db:g}\" @ {r['separ_adopt']:.0f} cm")
+            ("Acero de refuerzo adoptado", f"Ø{db:g}\" @ {r['separ_adopt']:.0f} cm"),
         ]
 
         pdf.set_fill_color(23, 105, 170)
         pdf.set_text_color(255, 255, 255)
-        pdf.set_font('Arial', 'B', 10)
-        pdf.cell(110, 7, ' Parámetro / Dato', 1, 0, 'L', True)
-        pdf.cell(80, 7, ' Valor Adoptado', 1, 1, 'L', True)
+        pdf.set_font('ArialU', 'B', 10)
+        pdf.cell(110, 7, ' Parámetro / Dato', border=1, align='L', fill=True, new_x='RIGHT', new_y='TOP')
+        pdf.cell(80, 7, ' Valor Adoptado', border=1, align='L', fill=True, new_x='LMARGIN', new_y='NEXT')
 
         pdf.set_text_color(0, 0, 0)
-        pdf.set_font('Arial', '', 10)
+        pdf.set_font('ArialU', '', 10)
         fill = False
         for k, v in datos_tabla:
             if fill:
                 pdf.set_fill_color(240, 245, 250)
             else:
                 pdf.set_fill_color(255, 255, 255)
-            pdf.cell(110, 6, limpiar(f" {k}"), 1, 0, 'L', True)
-            pdf.cell(80, 6, limpiar(f" {v}"), 1, 1, 'L', True)
+            pdf.cell(110, 6, f' {k}', border=1, align='L', fill=True, new_x='RIGHT', new_y='TOP')
+            pdf.cell(80, 6, f' {v}', border=1, align='L', fill=True, new_x='LMARGIN', new_y='NEXT')
             fill = not fill
 
         pdf.ln(8)
-
-        pdf.set_font('Arial', 'B', 12)
-        pdf.cell(0, 8, limpiar('DESARROLLO DE PASOS DE CÁLCULO'), 0, 1, 'L')
+        pdf.set_font('ArialU', 'B', 12)
+        pdf.cell(0, 8, 'DESARROLLO DE PASOS DE CÁLCULO', new_x='LMARGIN', new_y='NEXT')
 
         for t, b in pasos:
-            pdf.set_font('Arial', 'B', 10)
+            pdf.set_font('ArialU', 'B', 10)
             pdf.set_text_color(23, 105, 170)
-            pdf.cell(0, 6, limpiar(t), 0, 1, 'L')
-            pdf.set_font('Arial', '', 9)
+            pdf.cell(0, 6, u(t), new_x='LMARGIN', new_y='NEXT')
+            pdf.set_font('ArialU', '', 9)
             pdf.set_text_color(0, 0, 0)
-            pdf.multi_cell(0, 5, limpiar(b.replace('\n', ' ')))
+            pdf.multi_cell(0, 5, u(b.replace('\n', ' ')), new_x='LMARGIN', new_y='NEXT')
             pdf.ln(3)
 
-        return pdf.output()
+        return bytes(pdf.output())
 
     # Botón para descargar el PDF en Streamlit
     pdf_bytes = generar_pdf()
